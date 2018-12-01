@@ -1,3 +1,4 @@
+package model;
 
 public interface IBoard {
 	
@@ -7,4 +8,7 @@ public interface IBoard {
 	void chooseRubric (IRubric rubric);
 	void updateCurrentPlayer (IPlayer currentPlayer);
 	void checkDraw();
+	@Override
+	boolean equals(Object obj);
+	
 }

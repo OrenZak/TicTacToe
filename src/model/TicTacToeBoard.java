@@ -1,45 +1,53 @@
+package model;
 import java.util.ArrayList;
 
 public class TicTacToeBoard implements IBoard, Finals, IRegistrable {
 
-	private IRubric[] rubrics = new Rubric[BOARD_SIZE];
+	public static final int[][] VICTORIES = {{0,1,2}, {3,4,5}, {6,7,8}, {0,3,6}, {1,4,7}, {2,5,8}, {0,4,8}, {2,4,6}};
+	private IRubric[][] rubrics = new Rubric[LINE_SIZE][LINE_SIZE];
 	private IPlayer currentPlayer;
-	private CompareRubrics<IRubric> rubricComparator = new CompareRubrics<>();
+	private IPlayer otherPlayer;
 	private ArrayList<TicTacToeListener> listeners = new ArrayList<TicTacToeListener>();
 	
-	public TicTacToeBoard(IPlayer currentPlaye) {
-		this.currentPlayer=currentPlaye;
+	public TicTacToeBoard(IPlayer currentPlayer, IPlayer otherPlayer) {
+		this.currentPlayer=currentPlayer;
+		this.otherPlayer=otherPlayer;
 		generateRubrics();
-		processEvent(new TicTacToeEvent(TicTacToeRequests.Init, new String [] {}));
+		processEvent(new TicTacToeEvent(TicTacToeRequests.Init));
 	}
 	
 	private void generateRubrics(){
 		for (int i = 0; i < rubrics.length; i++){
-			rubrics[i] = new Rubric((int)(i/Math.sqrt(rubrics.length)), (int)(i%Math.sqrt(rubrics.length)));
+			for (int j=0; j< rubrics[i].length; j++)
+				rubrics[i][j] = new Rubric(i,j);
 		}
 	}
 	
 	@Override
 	public void initBoard() {
-		for (IRubric rubric : rubrics){
-			rubric.clearRubric();
+		for (int i = 0; i < rubrics.length; i++){
+			for (int j=0; j< rubrics[i].length; j++)
+				rubrics[i][j].clearRubric();
 		}
-		processEvent(new TicTacToeEvent(TicTacToeRequests.Init, new String [] {}));
+		processEvent(new TicTacToeEvent(TicTacToeRequests.Init));
 	}
 	
+	/**Bad analysis. we don't need current player so we dropped it*/
 	@Override
 	public void updateCurrentPlayer(IPlayer currentPlayer) {
-		this.currentPlayer=currentPlayer;
-		processEvent(new TicTacToeEvent(TicTacToeRequests.Swap, new String[] {currentPlayer.getName()}));
+		IPlayer temp = this.currentPlayer;
+		this.currentPlayer = this.otherPlayer;
+		this.otherPlayer = temp;
+		processEvent(new TicTacToeEvent(TicTacToeRequests.Swap, this.currentPlayer.getName()));
 	}
 	
 	/**Bad Analysis. Shouldn't have been an independent function. Plus we shouldn't have got a rubric here.
 	 * x and y would be better. Shouldn't have returned boolean*/
 	@Override
 	public boolean isLegalMove(IRubric rubric, IPlayer currentPlayer) throws NotYourTurnException, FullRubricException {
-		if (new ComparePlayers<IPlayer>().compare(this.currentPlayer, currentPlayer) != 0)
+		if (!currentPlayer.equals(this.currentPlayer))
 			throw new NotYourTurnException(currentPlayer.getName());
-		if (!rubrics[rubric.getX()*(int)(Math.sqrt(rubrics.length)) + rubric.getY()].isRubricEmpty())
+		if (!rubrics[rubric.getX()][rubric.getY()].isRubricEmpty())
 			throw new FullRubricException(rubric.getSign());
 		return true;
 	}
@@ -47,9 +55,8 @@ public class TicTacToeBoard implements IBoard, Finals, IRegistrable {
 	/** Bad Analysis. Legality checks should have been part of this function. Plus we shouldn't have got a rubric here. x and y would be better*/
 	@Override
 	public void chooseRubric(IRubric rubric) {
-		rubrics[rubric.getX()*(int)(Math.sqrt(rubrics.length)) + rubric.getY()].markRubric(currentPlayer.getSign());
-		//Here you get the current players name and sign and the string values of the marked rubric's x and y
-		processEvent(new TicTacToeEvent(TicTacToeRequests.Choose, new String[] {currentPlayer.getName(), currentPlayer.getSign(), ""+rubric.getX(), ""+rubric.getY()}));
+		rubrics[rubric.getX()][rubric.getY()].markRubric(currentPlayer.getSign());
+		processEvent(new TicTacToeEvent(TicTacToeRequests.Choose, currentPlayer.getName(), currentPlayer.getSign(), rubric.getX(), rubric.getY()));
 	}
 
 	/** Bad Analysis. Shouldn't have returned boolean. Plus we shouldn't have got a player here. we know the current player*/
@@ -58,11 +65,10 @@ public class TicTacToeBoard implements IBoard, Finals, IRegistrable {
 		//All possible victory streaks are kept in VICTORIES matrix
 		for (int[] victory : VICTORIES){
 			for (int i = 0; i < victory.length-1; i++){
-				if (rubricComparator.compare(rubrics[victory[i]], rubrics[victory[i+1]]) != 0)
+				if (!rubrics[victory[i]].equals(rubrics[victory[i+1]]))
 					break;
 				if (i==victory.length-1){
-					//Here you get the winner's name, his sign, his first rubric of victory streak and the difference between each rubric that is part of his victory streak
-					processEvent(new TicTacToeEvent(TicTacToeRequests.Victory, new String[] {currentPlayer.getName(), currentPlayer.getSign(), ""+victory[0], ""+((victory[i+1]-victory[0])/victory.length)}));
+					processEvent(new TicTacToeEvent(TicTacToeRequests.Victory, currentPlayer.getName(), currentPlayer.getSign(), victory));
 					return true;
 				}
 			}
@@ -72,14 +78,16 @@ public class TicTacToeBoard implements IBoard, Finals, IRegistrable {
 	
 	public void checkDraw(){
 		boolean empty = false;
-		for (IRubric rubric : rubrics){
-			if (rubric.isRubricEmpty()){
-				empty = true;
-				break;
+		for (int i = 0; i < rubrics.length; i++){
+			for (int j=0; j< rubrics[i].length; j++){
+				if (rubrics[i][j].isRubricEmpty()){
+					empty = true;
+					break;
+				}
 			}
 		}
 		if (!empty)
-			processEvent(new TicTacToeEvent(TicTacToeRequests.Draw, null));
+			processEvent(new TicTacToeEvent(TicTacToeRequests.Draw));
 	}
 	
 	@Override
