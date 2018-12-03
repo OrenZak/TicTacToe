@@ -1,5 +1,4 @@
 package model;
-import java.util.ArrayList;
 
 public class TicTacToeBoard implements IBoard {
 
@@ -90,6 +89,5 @@ public class TicTacToeBoard implements IBoard {
 
 	public VictoryData getVictoryDetails() {
 		return victoryDetails;
-	}
-	
+	}	
 }
