@@ -21,10 +21,10 @@ public class TicTacToePlayer implements IPlayer {
 	private int id;
 	private String playerName;
 	
-	public TicTacToePlayer(String playerName) throws FullGameException {
+	public TicTacToePlayer(String playerName) {
 		this.playerName=playerName;
 		if (idGen==MAX_PLAYERS)
-			throw new FullGameException(playerName);
+			return;
 		id = idGen++;
 		sign = Sign.values()[id];
 	}
