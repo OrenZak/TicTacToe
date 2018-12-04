@@ -1,22 +1,11 @@
 package view;
 
-import java.awt.Dimension;
-
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import model.IRubric;
 
 public class RubricPane extends GridPane implements RubricView {
@@ -64,57 +53,39 @@ public class RubricPane extends GridPane implements RubricView {
 		addRow(2, rubrics[6], rubrics[7], rubrics[8]);
 
 		rubrics[0].setOnAction(e -> {
-
 			clickListener.onClick(0, 0);
-
 		});
 
 		rubrics[1].setOnAction(e -> {
-
 			clickListener.onClick(0, 1);
-
 		});
 
 		rubrics[2].setOnAction(e -> {
-
 			clickListener.onClick(0, 2);
-
 		});
 
 		rubrics[3].setOnAction(e -> {
-
 			clickListener.onClick(1, 0);
-
 		});
 
 		rubrics[4].setOnAction(e -> {
-
 			clickListener.onClick(1, 1);
-
 		});
 
 		rubrics[5].setOnAction(e -> {
-
 			clickListener.onClick(1, 2);
-
 		});
 
 		rubrics[6].setOnAction(e -> {
-
 			clickListener.onClick(2, 0);
-
 		});
 
 		rubrics[7].setOnAction(e -> {
-
 			clickListener.onClick(2, 1);
-
 		});
 
 		rubrics[8].setOnAction(e -> {
-
 			clickListener.onClick(2, 2);
-
 		});
 
 	}
@@ -123,18 +94,17 @@ public class RubricPane extends GridPane implements RubricView {
 		setAlignment(Pos.CENTER);
 		setVgap(10 / 2);
 		setHgap(10);
-
 	}
 
-	private void setSign(IRubric rubric) {
+	@Override
+	public void setSign(IRubric rubric) {
 		int x = rubric.getX();
 		int y = rubric.getY();
 		rubrics[y * 3 + x].setText(rubric.getSign());
-
 	}
 
+	@Override
 	public void massege(String to, String massege, MassegeType massegeType) {
-
 		if (massegeType == MassegeType.INFORMATION) {
 			new Alert(Alert.AlertType.INFORMATION, to + " " + massege).showAndWait();
 		} else if (massegeType == MassegeType.ERROR) {
@@ -142,11 +112,8 @@ public class RubricPane extends GridPane implements RubricView {
 		}
 	}
 
-	
 	@Override
 	public void setRubricClickListener(RubricClickListener rubricClickListener) {
 		this.clickListener = rubricClickListener;
-
 	}
-
 }
