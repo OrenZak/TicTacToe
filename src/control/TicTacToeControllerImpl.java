@@ -1,5 +1,7 @@
 package control;
 
+import model.ChosenRubricData;
+import model.FullGameException;
 import model.FullRubricException;
 import model.IBoard;
 import model.IPlayer;
@@ -13,10 +15,10 @@ public class TicTacToeControllerImpl {
 	private IPlayer otherPlayer;
 	private final IBoard board;
 	public TicTacToeControllerImpl() {
-		this.currentPlayer = new TicTacToePlayer("First Player");
-		this.otherPlayer = new TicTacToePlayer("Sec Player");
-		this.board = new TicTacToeBoard(currentPlayer, otherPlayer);
 		//TODO create View
+		this.currentPlayer = new TicTacToePlayer("Moshe");
+		this.otherPlayer = new TicTacToePlayer("Peretz");	
+		this.board = new TicTacToeBoard(currentPlayer, otherPlayer);
 	}
 	
 	public void initGame() {
@@ -24,27 +26,29 @@ public class TicTacToeControllerImpl {
 	}
 
 	public void verifyMove(IPlayer player, IRubric rubric) {
-		boolean isLegal = false;
 		 try {
-			isLegal = board.isLegalMove(rubric, player);
-		} catch (NotYourTurnException | FullRubricException e) {
-			//TODO view show error message to player
-		}
-		if (isLegal) {
-			board.chooseRubric(rubric);
+			board.isLegalMove(rubric, player);
+			ChosenRubricData rubricData = board.chooseRubric(rubric);
+			//TODO tell the view to select the rubric
 			if (board.winningAchievement(player)) {
 				//TODO view show player win message.
 			} else {
-				
 				if (board.checkDraw()) {
 					//TODO view show draw message
 				} else {
-					//TODO should the controller have the players ?
-					//TODO why do i need to give the player to the board if he has them
-					board.updateCurrentPlayer(?????);
+					board.updateCurrentPlayer(otherPlayer);
+					swapPlayers();
 				}
 				
 			}
+		} catch (NotYourTurnException | FullRubricException e) {
+			//TODO view show error message to player
 		}
+	}
+
+	private void swapPlayers() {
+		IPlayer temp = currentPlayer;
+		currentPlayer = otherPlayer;
+		otherPlayer = temp;
 	}
 }
