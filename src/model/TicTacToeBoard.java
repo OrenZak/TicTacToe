@@ -4,7 +4,7 @@ public class TicTacToeBoard implements IBoard {
 
 	public static final int BOARD_SIZE = 9;	
 	public static final int LINE_SIZE = (int)Math.sqrt(BOARD_SIZE);
-	public static final int[][] VICTORIES = {{0,1,2}, {3,4,5}, {6,7,8}, {0,3,6}, {1,4,7}, {2,5,8}, {0,4,8}, {2,4,6}};
+	public static final int[][][] VICTORIES = {{{0,0},{0,1},{0,2}}, {{1,0}, {1,1}, {1,2}}, {{2,0}, {2,1}, {2,2}}, {{0,0},{1,0}, {2,0}}, {{0,1},{1,1},{2,1}}, {{0,2},{1,2},{2,2}}, {{0,0},{1,1},{2,2}}, {{0,2},{1,1},{2,0}}};
 	private IRubric[][] rubrics = new Rubric[LINE_SIZE][LINE_SIZE];
 	
 	private IPlayer currentPlayer;
@@ -46,7 +46,7 @@ public class TicTacToeBoard implements IBoard {
 		if (!currentPlayer.equals(this.currentPlayer))
 			throw new NotYourTurnException(currentPlayer.getName());
 		if (!rubrics[rubric.getX()][rubric.getY()].isRubricEmpty())
-			throw new FullRubricException(rubric.getSign());
+			throw new FullRubricException(otherPlayer.getSign());
 		return true;
 	}
 	
@@ -61,11 +61,11 @@ public class TicTacToeBoard implements IBoard {
 	@Override
 	public boolean winningAchievement(IPlayer currentPlayer) {
 		//All possible victory streaks are kept in VICTORIES matrix
-		for (int[] victory : VICTORIES){
+		for (int[][] victory : VICTORIES){
 			for (int i = 0; i < victory.length-1; i++){
-				if (!rubrics[victory[i]].equals(rubrics[victory[i+1]]))
+				if (!rubrics[victory[i][0]][victory[i][1]].equals(rubrics[victory[i+1][0]][victory[i+1][1]]) || rubrics[victory[i][0]][victory[i][1]].isRubricEmpty())
 					break;
-				if (i==victory.length-1){
+				if (i==victory.length - 2){
 					victoryDetails = new VictoryData(currentPlayer.getName(), currentPlayer.getSign(), victory);
 					return true;
 				}
