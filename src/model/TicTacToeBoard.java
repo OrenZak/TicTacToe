@@ -63,7 +63,7 @@ public class TicTacToeBoard implements IBoard {
 		//All possible victory streaks are kept in VICTORIES matrix
 		for (int[][] victory : VICTORIES){
 			for (int i = 0; i < victory.length-1; i++){
-				if (!rubrics[victory[i][0]][victory[i][1]].equals(rubrics[victory[i+1][0]][victory[i][1]]))
+				if (!rubrics[victory[i][0]][victory[i][1]].equals(rubrics[victory[i+1][0]][victory[i+1][1]]) || rubrics[victory[i][0]][victory[i][1]].isRubricEmpty())
 					break;
 				if (i==victory.length - 2){
 					victoryDetails = new VictoryData(currentPlayer.getName(), currentPlayer.getSign(), victory);

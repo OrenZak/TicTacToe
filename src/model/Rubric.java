@@ -4,7 +4,7 @@ public class Rubric implements IRubric {
 
 	private int x;
 	private int y;
-	private String sign;
+	private String sign = null;
 	
 	public Rubric(int x, int y) {
 		this.x=x;
@@ -50,9 +50,7 @@ public class Rubric implements IRubric {
 		if (getClass() != obj.getClass())
 			return false;
 		Rubric other = (Rubric) obj;
-		if (x != other.x)
-			return false;
-		if (y != other.y)
+		if (sign!=other.sign)
 			return false;
 		return true;
 	}
