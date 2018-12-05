@@ -46,7 +46,7 @@ public class TicTacToeBoard implements IBoard {
 		if (!currentPlayer.equals(this.currentPlayer))
 			throw new NotYourTurnException(currentPlayer.getName());
 		if (!rubrics[rubric.getX()][rubric.getY()].isRubricEmpty())
-			throw new FullRubricException(rubric.getSign());
+			throw new FullRubricException(otherPlayer.getSign());
 		return true;
 	}
 	

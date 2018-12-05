@@ -1,19 +1,24 @@
 package view;
 
-import model.IRubric;
 import view.RubricPane.MassegeType;
 
 public interface RubricView {
 
-	public void setSign(IRubric rubric);
+	public void clearFields();
+	
+	public void setSign(int x, int y, String sign);
 
 	public void massege(String to, String massege, MassegeType massegeType);
 
-	void setRubricClickListener(RubricClickListener rubricClickListener);
+	void setEventsListener(ViewEvents rubricClickListener);
 
-	public interface RubricClickListener {
+	public interface ViewEvents {
 
-		void onClick(int x, int y);
+		void rubricClicked(int x, int y);
+		
+		void initGameClicked();
 
 	}
+
+	
 }

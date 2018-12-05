@@ -13,8 +13,8 @@ public class TicTacToeApp extends Application {
 
 	@Override
 	public void start(Stage PrimaryStage) throws Exception {
-		IPlayer firstPlayer = new TicTacToePlayer("Moshe");
-		IPlayer secPlayer = new TicTacToePlayer("Peretz");
+		IPlayer firstPlayer = new TicTacToePlayer("First Player");
+		IPlayer secPlayer = new TicTacToePlayer("Second Player");
 		IBoard board = new TicTacToeBoard(firstPlayer, secPlayer);
 		RubricPane view = new RubricPane();
 		TicTacToeControllerImpl controller = new TicTacToeControllerImpl(firstPlayer, secPlayer, view, board);

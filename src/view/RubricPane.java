@@ -6,88 +6,59 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import model.IRubric;
 
 public class RubricPane extends GridPane implements RubricView {
-
-	public final Button[] rubrics = new Button[9];
-
-	private final String BackgroundColor = "-fx-background-color: #F0FFFF";
-
-	private final String XSign = "X";
-	private final String OSign = "O";
-
-	private final String Sign = "";
-
-	private int Tocken = 0;
-
+	private static final int ROWS_COLS_MAX = 3;
+	public final Button[][] rubrics = new Button[ROWS_COLS_MAX][ROWS_COLS_MAX];
+	
 	public enum MassegeType {
 		INFORMATION, ERROR
 	};
 
-	private RubricClickListener clickListener;
+	private ViewEvents eventListener;
 
 	public RubricPane() {
-
 		setAlignment(Pos.CENTER);
-
 		setPadding(new Insets(15));
-
-		for (int i = 0; i < rubrics.length; i++) {
-
-			Button button = new Button();
-			button.setMaxWidth(500);
-			button.setMaxHeight(500);
-			button.setStyle("-fx-background-color: MediumSeaGreen");
-
-			rubrics[i] = button;
-
-			GridPane.setHgrow(button, Priority.ALWAYS);
-			GridPane.setVgrow(button, Priority.ALWAYS);
-
-		}
-
+		createButtons();
 		setupSpacing();
-		addRow(0, rubrics[0], rubrics[1], rubrics[2]);
-		addRow(1, rubrics[3], rubrics[4], rubrics[5]);
-		addRow(2, rubrics[6], rubrics[7], rubrics[8]);
+		addButtons();
+		setClickListeners();
+	}
 
-		rubrics[0].setOnAction(e -> {
-			clickListener.onClick(0, 0);
-		});
+	private void addButtons() {
+		for(int i = 0; i < 3; i++) {
+			addRow(i, rubrics[i][0], rubrics[i][1], rubrics[i][2]);
+		}
+	}
 
-		rubrics[1].setOnAction(e -> {
-			clickListener.onClick(0, 1);
-		});
+	private void createButtons() {
+		for (int i = 0; i < ROWS_COLS_MAX; i++) {
+			for (int j = 0; j < ROWS_COLS_MAX; j++) {
+				//TODO change into two dimensinal array
+				Button button = new Button();
+				button.setMaxWidth(500);
+				button.setMaxHeight(500);
+				button.setStyle("-fx-background-color: MediumSeaGreen");
 
-		rubrics[2].setOnAction(e -> {
-			clickListener.onClick(0, 2);
-		});
+				rubrics[i][j] = button;
 
-		rubrics[3].setOnAction(e -> {
-			clickListener.onClick(1, 0);
-		});
+				GridPane.setHgrow(button, Priority.ALWAYS);
+				GridPane.setVgrow(button, Priority.ALWAYS);
+			}
+		}
+	}
 
-		rubrics[4].setOnAction(e -> {
-			clickListener.onClick(1, 1);
-		});
-
-		rubrics[5].setOnAction(e -> {
-			clickListener.onClick(1, 2);
-		});
-
-		rubrics[6].setOnAction(e -> {
-			clickListener.onClick(2, 0);
-		});
-
-		rubrics[7].setOnAction(e -> {
-			clickListener.onClick(2, 1);
-		});
-
-		rubrics[8].setOnAction(e -> {
-			clickListener.onClick(2, 2);
-		});
-
+	private void setClickListeners() {
+		for (int i = 0; i < ROWS_COLS_MAX; i++) {
+			for (int j = 0; j < ROWS_COLS_MAX; j++) {
+				final int x = i;
+				final int y = j;
+				rubrics[i][j].setOnAction(e -> {
+					eventListener.rubricClicked(x, y);
+				});
+			}
+		}
 	}
 
 	private void setupSpacing() {
@@ -97,10 +68,8 @@ public class RubricPane extends GridPane implements RubricView {
 	}
 
 	@Override
-	public void setSign(IRubric rubric) {
-		int x = rubric.getX();
-		int y = rubric.getY();
-		rubrics[y * 3 + x].setText(rubric.getSign());
+	public void setSign(int x, int y, String sign) {
+		rubrics[x][y].setText(sign);
 	}
 
 	@Override
@@ -113,7 +82,20 @@ public class RubricPane extends GridPane implements RubricView {
 	}
 
 	@Override
-	public void setRubricClickListener(RubricClickListener rubricClickListener) {
-		this.clickListener = rubricClickListener;
+	public void setEventsListener(ViewEvents eventListener) {
+		this.eventListener = eventListener;
+	}
+
+	public void onInitGameClicked() {
+		eventListener.initGameClicked();
+	}
+
+	@Override
+	public void clearFields() {
+		for (int i = 0; i < ROWS_COLS_MAX; i++) {
+			for (int j = 0; j < ROWS_COLS_MAX; j++) {
+				rubrics[i][j].setText("");
+			}
+		}
 	}
 }
