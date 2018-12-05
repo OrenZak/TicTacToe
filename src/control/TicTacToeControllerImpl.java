@@ -83,7 +83,7 @@ public class TicTacToeControllerImpl {
 
 	private String createWinningMsg(VictoryData victoryData) {
 		return new StringBuilder(" You Win").append("\n").append("Your sign: ").append(victoryData.getSign())
-				.append("\n").append("Victory strike: ").append(getVictoryIndexes(victoryData.getVictory()))
+				.append("\n").append("Victory streak: ").append(getVictoryIndexes(victoryData.getVictory()))
 				.toString();
 	}
 
